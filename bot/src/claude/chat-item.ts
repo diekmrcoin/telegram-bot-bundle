@@ -1,5 +1,5 @@
 import { AttributeValue } from '@aws-sdk/client-dynamodb';
-import { ChatRoles } from './chat-roles.enum';
+import { ChatRoles } from '../ai/anthropic/typings/chat-roles.enum';
 
 export class ChatItem {
   constructor(
