@@ -84,6 +84,11 @@ variable "attach_policies" {
   default = {}
 }
 
+variable "cloudwatch_retention_days" {
+  type    = number
+  default = 7
+}
+
 output "arn" {
   value = aws_lambda_function.lambda_function.arn
 }
@@ -216,4 +221,10 @@ resource "aws_iam_role_policy_attachment" "custom_policies_attachment" {
   for_each   = var.attach_policies
   role       = aws_iam_role.iam_role.name
   policy_arn = each.value
+}
+
+resource "aws_cloudwatch_log_group" "lambda_log_group" {
+  name              = "/aws/lambda/${aws_lambda_function.lambda_function.function_name}"
+  retention_in_days = var.cloudwatch_retention_days
+  depends_on        = [aws_lambda_function.lambda_function]
 }
