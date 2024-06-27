@@ -1,0 +1,4 @@
+bucket  = "diekmrcoin-core-eu-west-3-tfstates"
+key     = "telegram-bot/dev/terraform.tfstate"
+region  = "eu-west-3"
+encrypt = true
