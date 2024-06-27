@@ -9,4 +9,4 @@ zip -r ../artifacts/lambda.zip ../.env
 export PAGER=""
 
 # Update the Lambda function code
-aws lambda update-function-code --function-name diekmrcoin-dev-lmb-ai-bot --zip-file fileb://../artifacts/lambda.zip
+aws lambda update-function-code --function-name $1 --zip-file fileb://../artifacts/lambda.zip
