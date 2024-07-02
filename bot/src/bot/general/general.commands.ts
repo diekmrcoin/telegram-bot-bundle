@@ -18,11 +18,23 @@ export class GeneralCommands extends CommandWrapper {
     );
     ctx.reply(answer.message, { parse_mode: 'HTML' });
   }
-  helpCommand(ctx: Context): void {
-    throw new Error('Method not implemented.');
+  async helpCommand(ctx: Context): Promise<void> {
+    const listCommands: string[] = [];
+    listCommands.push('/start - Start a new chat');
+    listCommands.push('/help - Show this help');
+    listCommands.push('/quit - Quit the chat');
+    const answer: ModelResponse = await this.aiWrapper!.sendMessage(
+      "<sysmtem>The user asked for help. Answer in its language. Here's a list of available commands:\n" +
+        listCommands.join('\n') +
+        '</system>',
+      [],
+      this.aiModel,
+      this.getClaudeTools(),
+    );
+    ctx.reply(answer.message, { parse_mode: 'HTML' });
   }
   quitCommand(ctx: Context): void {
-    throw new Error('Method not implemented.');
+    // this.memory!.deleteMessages(ctx.chat!.id.toString());
   }
   registerCommands(): void {
     this.bot.command('start', this.startCommand.bind(this));
@@ -45,21 +57,5 @@ export class GeneralCommands extends CommandWrapper {
 
   getClaudeTools(): Anthropic.Messages.Tool[] {
     return [];
-    // return [
-    //   {
-    //     name: 'check_word',
-    //     description: 'Check if the word is correct and returns the emojis result of the word to verify',
-    //     input_schema: {
-    //       type: 'object',
-    //       properties: {
-    //         word: {
-    //           type: 'string',
-    //           description: 'The word to check',
-    //         },
-    //       },
-    //       required: ['word'],
-    //     },
-    //   },
-    // ];
   }
 }

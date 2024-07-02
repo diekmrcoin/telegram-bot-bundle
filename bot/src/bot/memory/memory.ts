@@ -26,8 +26,12 @@ export class Memory {
     return items.map((item) => ChatItem.fromDynamoItem(item));
   }
 
-  // TODO: Refactor the `formattedMessages` method to avoid using specific anthropic definitions (e.g., USER, ASSISTANT) directly within its logic. 
-  // This approach violates the Open/Closed Principle (OCP) of SOLID principles, as it makes the method less flexible and harder to extend for different roles or entities without modifying its internal logic. 
+  async deleteMessages(chatId: string): Promise<void> {
+    await this.db.deleteChatRecord(chatId);
+  }
+
+  // TODO: Refactor the `formattedMessages` method to avoid using specific anthropic definitions (e.g., USER, ASSISTANT) directly within its logic.
+  // This approach violates the Open/Closed Principle (OCP) of SOLID principles, as it makes the method less flexible and harder to extend for different roles or entities without modifying its internal logic.
   // Consider abstracting the role verification process or utilizing a strategy pattern to dynamically handle various roles, enhancing the method's adaptability and maintainability.  // async formattedMessages(chatId: string): Promise<ChainItem[]> {
   //   const messages = await this.getMessages(chatId);
   //   const chainMessages = messages.map((message): ChainItem => ({ role: message.role, content: message.message }));

@@ -35,12 +35,12 @@ export class GeneralBot extends BotWrapper {
       '<config>You will be using Telegram Bot as communication channel, format your messages only with HTML, never in Markdown.</config>',
       "<config>Use emojis to express emotions or emphasize key points. Don't overuse them.</config>",
       "<example>I understand. Let's tackle this step-by-step. First, we'll [action]. Then, we can [next step]. How does that sound?</example>",
-      '¿Has entendido las reglas?',
+      'Have you understood the rules?',
     ].join('');
     const firstAnswer: ChainItem = {
       role: ChatRoles.ASSISTANT,
       content: [
-        'Sí, he entendido perfectamente las reglas 😊. Estoy lista para ayudarte de manera clara y concisa, adaptándome a tus necesidades. ¿En qué puedo asistirte hoy?',
+        "Yes, I've understood the rules perfectly 😊. I'm ready to help you clearly and concisely, adapting to your needs. How can I assist you today?",
       ].join(''),
     };
     return [

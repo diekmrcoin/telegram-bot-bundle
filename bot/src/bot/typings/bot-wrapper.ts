@@ -1,4 +1,3 @@
-import { Telegraf } from 'telegraf';
 import { CommandWrapper } from './command-wrapper';
 import { ChainItem } from '../../ai/anthropic/typings/chain-item';
 

@@ -101,4 +101,39 @@ export class DynamoDBWrapper {
       return [];
     }
   }
+
+  async deleteChatRecord(chatId: string) {
+    const params: QueryCommandInput = {
+      TableName: this.tableName,
+      KeyConditionExpression: '#partitionKey = :partition',
+      ExpressionAttributeNames: {
+        '#partitionKey': 'partition',
+      },
+      ExpressionAttributeValues: {
+        ':partition': { S: `chat_${chatId}` },
+      },
+    };
+    try {
+      const data = await this.client.query(params);
+      if (!data || Number(data.Count) < 1) return;
+      if (!data.Items) return;
+      const deleteParams: BatchWriteItemCommandInput = {
+        RequestItems: {
+          [this.tableName]: data.Items.map((item) => ({
+            DeleteRequest: {
+              Key: {
+                partition: item.partition,
+                id: item.id,
+              },
+            },
+          })),
+        },
+      };
+      await this.client.batchWriteItem(deleteParams);
+      console.log(`Registros eliminados para el usuario: ${chatId}`);
+    } catch (error) {
+      console.error(`Error al eliminar registro: ${error}`);
+      console.error((error as Error).stack);
+    }
+  }
 }

@@ -25,5 +25,12 @@ export abstract class CommandWrapper {
     this.memory = memory;
   }
 
+  getMemory(): Memory {
+    if (!this.memory) {
+      throw new Error('Memory is not set');
+    }
+    return this.memory;
+  }
+
   abstract getClaudeTools(): Anthropic.Messages.Tool[];
 }
