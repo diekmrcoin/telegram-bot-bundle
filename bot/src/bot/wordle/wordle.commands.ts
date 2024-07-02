@@ -4,6 +4,7 @@ import { ClaudeModels } from '../../ai/anthropic/typings/models.emun';
 import { ModelResponse } from '../../ai/anthropic/typings/model.response';
 import { message } from 'telegraf/filters';
 import Anthropic from '@anthropic-ai/sdk';
+import { ChainItem } from '../../ai/anthropic/typings/chain-item';
 
 export class WordleCommands extends CommandWrapper {
   aiModel = ClaudeModels.haiku_3;
@@ -60,5 +61,8 @@ export class WordleCommands extends CommandWrapper {
         },
       },
     ];
+  }
+  getContext(chatId: string): Promise<ChainItem[]> {
+    throw new Error('Method not implemented.');
   }
 }

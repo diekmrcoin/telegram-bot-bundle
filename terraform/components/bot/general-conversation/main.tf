@@ -7,7 +7,7 @@ variable "prefix" {
 }
 
 module "dynamodb_bot_memory" {
-  source      = "./modules/dynamo_db"
+  source      = "../../../modules/dynamo_db"
   prefix      = var.prefix
   name        = "ai-bot-memory"
   environment = var.environment
@@ -45,7 +45,7 @@ resource "aws_iam_policy" "lambda_memory_access" {
 }
 
 module "lambda_bot" {
-  source      = "./modules/lambda"
+  source      = "../../../modules/lambda"
   prefix      = var.prefix
   name        = "ai-bot"
   description = "AI Bot Lambda Function"

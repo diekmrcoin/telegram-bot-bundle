@@ -9,15 +9,15 @@ import {
 import { Config } from '../config/config';
 
 export class DynamoDBWrapper {
-  private tableName = 'diekmrcoin-dev-dynamo-ai-bot-memory';
+  private tableName = 'synergysys-dev-dynamo-ai-bot-memory';
   private region = 'eu-west-3';
   private client: DynamoDB;
   constructor() {
     this.client = new DynamoDB({ region: this.region, credentials: Config.AWS_CREDENTIALS as any });
   }
-  private genId(): string {
+  private genId(i = 0): string {
     // rangeKey is datetime + 5 random number to avoid conflicts with
-    return `${new Date().getTime()}_${Math.floor(Math.random() * 100000)}`;
+    return `${new Date().getTime()}_${i}_${Math.floor(Math.random() * 100000)}`;
   }
 
   async addChatRecord(data: Record<string, AttributeValue>) {
@@ -46,9 +46,10 @@ export class DynamoDBWrapper {
     const chunkSize = 25; // DynamoDB batchWrite limit
     for (let i = 0; i < dataItems.length; i += chunkSize) {
       const chunk = dataItems.slice(i, i + chunkSize);
+      let elemIndex = 0;
       const requestItems = chunk.map((data): WriteRequest => {
         const now = new Date();
-        const id = this.genId();
+        const id = this.genId(elemIndex++);
         return {
           PutRequest: {
             Item: {

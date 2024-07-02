@@ -7,11 +7,11 @@ import { GeneralCommands } from '../bot/general/general.commands';
 import { GeneralBot } from '../bot/general.bot';
 import { DynamoDBWrapper } from '../db/dynamodb';
 import { Memory } from '../bot/memory/memory';
-Config.validate(false);
+Config.validate(true);
 const generalCommands = new GeneralCommands(new Telegraf(Config.TELEGRAM_BOT_TOKEN));
-// const db = new DynamoDBWrapper();
-// const memory = new Memory(db);
-// generalCommands.setMemory(memory);
+const db = new DynamoDBWrapper();
+const memory = new Memory(db);
+generalCommands.setMemory(memory);
 const generalBot = new GeneralBot('General Bot', 'General bot for all users', generalCommands);
 generalBot.run();
 
