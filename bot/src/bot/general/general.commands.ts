@@ -6,16 +6,16 @@ import { message } from 'telegraf/filters';
 import Anthropic from '@anthropic-ai/sdk';
 
 export class GeneralCommands extends CommandWrapper {
-  aiModel = ClaudeModels.haiku_3;
+  aiModel = ClaudeModels.sonnet_3_5;
   async startCommand(ctx: Context): Promise<void> {
-    ctx.reply('Welcome to Wordle!');
+    const username = ctx.from!.username;
+    const name = ctx.from!.first_name;
     const answer: ModelResponse = await this.aiWrapper!.sendMessage(
-      'Hola, espero pasármelo muy bien.',
+      `<system>New user starting chat, named ${name || username}, greet and ask for the language to use. Use english for this message.</system>`,
       [],
       this.aiModel,
       this.getClaudeTools(),
     );
-    console.log('answer', answer);
     ctx.reply(answer.message, { parse_mode: 'HTML' });
   }
   helpCommand(ctx: Context): void {
@@ -44,21 +44,22 @@ export class GeneralCommands extends CommandWrapper {
   }
 
   getClaudeTools(): Anthropic.Messages.Tool[] {
-    return [
-      {
-        name: 'check_word',
-        description: 'Check if the word is correct and returns the emojis result of the word to verify',
-        input_schema: {
-          type: 'object',
-          properties: {
-            word: {
-              type: 'string',
-              description: 'The word to check',
-            },
-          },
-          required: ['word'],
-        },
-      },
-    ];
+    return [];
+    // return [
+    //   {
+    //     name: 'check_word',
+    //     description: 'Check if the word is correct and returns the emojis result of the word to verify',
+    //     input_schema: {
+    //       type: 'object',
+    //       properties: {
+    //         word: {
+    //           type: 'string',
+    //           description: 'The word to check',
+    //         },
+    //       },
+    //       required: ['word'],
+    //     },
+    //   },
+    // ];
   }
 }

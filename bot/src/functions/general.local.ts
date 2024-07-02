@@ -1,12 +1,12 @@
 import { config } from 'dotenv';
 // load .env.local file
 config({ path: '.env.local' });
-import { WordleBot } from '../bot/wordle.bot';
 import { Config } from '../config/config';
 import { Telegraf } from 'telegraf';
-import { WordleCommands } from '../bot/wordle/wordle.commands';
+import { GeneralCommands } from '../bot/general/general.commands';
+import { GeneralBot } from '../bot/general.bot';
 Config.validate(false);
-const wordleBot = new WordleBot('Wordle', 'Wordle game', new WordleCommands(new Telegraf(Config.TELEGRAM_BOT_TOKEN)));
+const wordleBot = new GeneralBot('Wordle', 'Wordle game', new GeneralCommands(new Telegraf(Config.TELEGRAM_BOT_TOKEN)));
 wordleBot.run();
 
 // Enable graceful stop

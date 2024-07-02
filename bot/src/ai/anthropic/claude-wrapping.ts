@@ -36,7 +36,9 @@ export class ClaudeWrapping {
       tools: tools,
     });
     console.log('answer', answer);
-    console.log(JSON.stringify((answer.content[1] as any).input, null, 2));
+    if (answer.content[1]) {
+      console.log('content 1', JSON.stringify((answer.content[1] as any).input, null, 2));
+    }
     return {
       usage: answer.usage,
       message: (answer.content[0] as TextBlock).text || 'error',
