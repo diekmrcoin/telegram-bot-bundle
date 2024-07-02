@@ -1,12 +1,11 @@
 import { AttributeValue } from '@aws-sdk/client-dynamodb';
-import { ChatRoles } from '../ai/anthropic/typings/chat-roles.enum';
 
 export class ChatItem {
   constructor(
     public readonly chatId: string,
     public readonly username: string,
     public readonly message: string,
-    public readonly role: ChatRoles,
+    public readonly role: string,
     public readonly TTL?: number,
     public readonly dateTime?: string,
   ) {}
@@ -16,7 +15,7 @@ export class ChatItem {
       item.chatId.S,
       item.username.S,
       item.message.S,
-      item.role.S as ChatRoles,
+      item.role.S,
       item.TTL ? item.TTL.N : undefined,
       item.dateTime.S,
     );
@@ -28,7 +27,7 @@ export class ChatItem {
       chatId: { S: this.chatId },
       message: { S: this.message },
       role: { S: this.role },
-      TTL: this.TTL ? { N: this.TTL.toString() } : (undefined as any),
+      TTL: this.TTL ? { N: this.TTL.toString() } : (undefined as any), // undefined values will be removed in the parser
       dateTime: { S: this.dateTime! },
     };
   }

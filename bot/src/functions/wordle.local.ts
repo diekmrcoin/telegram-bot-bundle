@@ -6,11 +6,10 @@ import { Config } from '../config/config';
 import { Telegraf } from 'telegraf';
 import { WordleCommands } from '../bot/wordle/wordle.commands';
 Config.validate(false);
-const telegrafBot = new Telegraf(Config.TELEGRAM_BOT_TOKEN);
-const bot = new WordleBot('Wordle', 'Wordle game', telegrafBot, new WordleCommands(telegrafBot));
-bot.run();
+const wordleBot = new WordleBot('Wordle', 'Wordle game', new WordleCommands(new Telegraf(Config.TELEGRAM_BOT_TOKEN)));
+wordleBot.run();
 
 // Enable graceful stop
-process.once('SIGINT', () => bot.stop('SIGINT'));
-process.once('SIGTERM', () => bot.stop('SIGTERM'));
+process.once('SIGINT', () => wordleBot.stop('SIGINT'));
+process.once('SIGTERM', () => wordleBot.stop('SIGTERM'));
 console.log('Started bot!');

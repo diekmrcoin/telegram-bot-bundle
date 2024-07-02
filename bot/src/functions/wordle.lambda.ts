@@ -1,16 +1,16 @@
 import http from 'serverless-http';
 
 import 'dotenv/config';
-import { Bot } from '../bot/bot';
 import { Config } from '../config/config';
-import { ClaudeAI } from '../claude/claude';
-import { Memory } from '../claude/memory';
-import { DynamoDBWrapper } from '../db/dynamodb';
+import { WordleBot } from '../bot/wordle.bot';
+import { Telegraf } from 'telegraf';
+import { WordleCommands } from '../bot/wordle/wordle.commands';
 Config.validate(false);
-const db = new DynamoDBWrapper();
-const memory = new Memory(db);
-const claude = new ClaudeAI(Config.CLAUDE_API_KEY, memory);
-const bot = new Bot(Config.TELEGRAM_BOT_TOKEN, claude);
+const wordleBot = new WordleBot(
+  'Wordle',
+  'Wordle game bot',
+  new WordleCommands(new Telegraf(Config.TELEGRAM_BOT_TOKEN)),
+);
 // // Temporary return 200
 // export const serverlessBot = async (event: any) => {
 //   return {
@@ -19,9 +19,9 @@ const bot = new Bot(Config.TELEGRAM_BOT_TOKEN, claude);
 //   };
 // };
 // setup webhook
-export const serverlessBot = http(bot.webhookCallback('/', { secretToken: Config.TELEGRAM_SECRET_TOKEN }));
+export const serverlessBot = http(wordleBot.webhookCallback('/', { secretToken: Config.TELEGRAM_SECRET_TOKEN }));
 
 // Enable graceful stop
-process.once('SIGINT', () => bot.stop('SIGINT'));
-process.once('SIGTERM', () => bot.stop('SIGTERM'));
+process.once('SIGINT', () => wordleBot.stop('SIGINT'));
+process.once('SIGTERM', () => wordleBot.stop('SIGTERM'));
 console.log('Started bot!');

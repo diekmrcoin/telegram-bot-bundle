@@ -1,4 +1,3 @@
-import { Telegraf } from 'telegraf';
 import { BotWrapper } from './typings/bot-wrapper';
 import { CommandWrapper } from './typings/command-wrapper';
 import { ClaudeWrapping } from '../ai/anthropic/claude-wrapping';
@@ -7,8 +6,8 @@ import { ChainItem } from '../ai/anthropic/typings/chain-item';
 import { ChatRoles } from '../ai/anthropic/typings/chat-roles.enum';
 
 export class WordleBot extends BotWrapper {
-  constructor(name: string, description: string, bot: Telegraf, commandWrapper: CommandWrapper) {
-    super(name, description, bot, commandWrapper);
+  constructor(name: string, description: string, commandWrapper: CommandWrapper) {
+    super(name, description, commandWrapper);
     this.setClaude(new ClaudeWrapping(Config.CLAUDE_API_KEY, this.getSystemConfig()));
   }
 

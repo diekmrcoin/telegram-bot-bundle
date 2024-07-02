@@ -11,6 +11,9 @@ export abstract class CommandWrapper {
   abstract helpCommand(ctx: any): void;
   abstract quitCommand(ctx: any): void;
 
+  getBot(): Telegraf {
+    return this.bot;
+  }
   setClaude(claude: ClaudeWrapping) {
     this.aiWrapper = claude;
   }
