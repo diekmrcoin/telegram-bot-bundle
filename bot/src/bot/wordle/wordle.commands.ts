@@ -3,7 +3,6 @@ import { CommandWrapper } from '../typings/command-wrapper';
 import { ClaudeModels } from '../../ai/anthropic/typings/models.emun';
 import { ModelResponse } from '../../ai/anthropic/typings/model.response';
 import { message } from 'telegraf/filters';
-import { Update } from 'telegraf/typings/core/types/typegram';
 import Anthropic from '@anthropic-ai/sdk';
 
 export class WordleCommands extends CommandWrapper {

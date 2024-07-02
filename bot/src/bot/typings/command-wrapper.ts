@@ -1,9 +1,11 @@
 import { Telegraf } from 'telegraf';
 import { ClaudeWrapping } from '../../ai/anthropic/claude-wrapping';
 import Anthropic from '@anthropic-ai/sdk';
+import { Memory } from '../memory/memory';
 
 export abstract class CommandWrapper {
   protected aiWrapper?: ClaudeWrapping;
+  protected memory?: Memory;
   constructor(protected bot: Telegraf) {}
   // Commands actions
   abstract registerCommands(): void;
@@ -14,8 +16,13 @@ export abstract class CommandWrapper {
   getBot(): Telegraf {
     return this.bot;
   }
+
   setClaude(claude: ClaudeWrapping) {
     this.aiWrapper = claude;
+  }
+
+  setMemory(memory: Memory) {
+    this.memory = memory;
   }
 
   abstract getClaudeTools(): Anthropic.Messages.Tool[];
