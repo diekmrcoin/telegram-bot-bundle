@@ -7,8 +7,8 @@
     "start": "ts-node src/functions/general.local.ts",
     "start:wordle": "ts-node src/functions/wordle.local.ts",
     "start:prod": "node dist/bot.js",
-    "build": "rimraf dist && esbuild src/functions/general.local.ts --legal-comments=none --bundle --platform=node --target=node20 --minify --outfile=dist/lambda.js",
-    "deploy": "npm run build && bash ./scripts/deploy.sh",
+    "build": "rimraf dist && esbuild src/functions/general.lambda.ts --legal-comments=none --bundle --platform=node --target=node20 --minify --outfile=dist/lambda.js",
+    "deploy": "npm run build && bash ./scripts/deploy.sh synergysys-dev-lmb-ai-bot",
     "clean": "rimraf dist",
     "prettier": "prettier --write src/**/*.ts"
   },

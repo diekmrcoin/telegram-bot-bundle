@@ -11,7 +11,6 @@ The bot is built to interact with users on Telegram, offering a range of command
 - AI Integration: Utilizes the `@anthropic-ai/sdk` for advanced AI capabilities.
 - Command Handling: Supports various commands, including a welcome message via the `/start` command.
 - Environment Variables: Uses a `.env` file to securely manage sensitive information like bot tokens and API keys.
-- [Lambda is callable as HTTPS](https://hkgmaop54yrwijhn25xs5kmjne0entnv.lambda-url.eu-west-3.on.aws/)
 
 ## Getting Started
 
@@ -21,6 +20,12 @@ The bot is built to interact with users on Telegram, offering a range of command
 4. Create a `.env` file in the `bot/` directory and add your Telegram bot token and any other required API keys or credentials.
 5. Start the bot by running `npm start` from the `bot/` directory.
 6. Your Telegram bot is now up and running! Interact with it by sending messages or commands on Telegram.
+
+## Setting the webhook with Telegram api
+
+```bash
+curl https://api.telegram.org/bot$BOT_TOKEN/setWebhook?url=$FULL_URL_TO_FUNCTION&secret_token=$SECRET_TOKEN
+```
 
 ## Serverless Deployment
 
