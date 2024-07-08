@@ -55,8 +55,8 @@ export class Config {
     return Config._TELEGRAM_ADMIN_CHAT_IDS;
   }
 
-  public static get AWS_CREDENTIALS(): { accessKeyId: string; secretAccessKey: string } {
-    return Config._AWS_CREDENTIALS;
+  public static get AWS_CREDENTIALS(): { accessKeyId: string; secretAccessKey: string } | undefined {
+    return Config._AWS_CREDENTIALS.accessKeyId ? Config._AWS_CREDENTIALS : undefined;
   }
 
   public static validate(fail: boolean): boolean {

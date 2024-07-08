@@ -1,4 +1,4 @@
-import { Usage } from "@anthropic-ai/sdk/resources/messages";
+import { Usage } from '@anthropic-ai/sdk/resources/messages';
 
 export interface ModelResponse {
   usage: Usage;

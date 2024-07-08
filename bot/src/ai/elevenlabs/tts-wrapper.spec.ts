@@ -1,18 +1,18 @@
 import axios from 'axios';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
-import { TTSWrapping } from './tts-wrapping';
+import { TTSWrapper } from './tts-wrapper';
 
 jest.mock('axios');
 
 describe('TTSWrapping', () => {
-  let ttsWrapping: TTSWrapping;
+  let ttsWrapping: TTSWrapper;
   beforeEach(() => {
-    ttsWrapping = new TTSWrapping('API_KEY');
+    ttsWrapping = new TTSWrapper('API_KEY');
   });
 
   it('should initialize with the correct API key', () => {
     let apiKey = 'API_KEY_TEST';
-    ttsWrapping = new TTSWrapping(apiKey);
+    ttsWrapping = new TTSWrapper(apiKey);
     expect(ttsWrapping['apiKey']).toBe(apiKey);
   });
 
@@ -27,17 +27,37 @@ describe('TTSWrapping', () => {
     it('should call the API with the correct parameters', async () => {
       const mockedResponse = { data: {} };
       (axios.request as any).mockResolvedValue(mockedResponse);
-      const response = await ttsWrapping.getAudio('text', 'language');
-      expect(response).toEqual({});
+      const response = await ttsWrapping.getAudio('text');
+      expect(response).toBeTruthy();
     });
   });
 
   describe('voices', () => {
     it('should call the API with the correct parameters', async () => {
-      const mockedResponse = { data: {} };
-      (axios.request as any).mockResolvedValue(mockedResponse);
+      const mockedResponse = {
+        data: {
+          voices: [],
+        },
+      };
+      (axios.get as any).mockResolvedValue(mockedResponse);
       const response = await ttsWrapping.getVoices();
-      expect(response).toEqual({});
+      expect(response).toEqual({
+        voices: [],
+      });
+    });
+  });
+  describe('models', () => {
+    it('should call the API with the correct parameters', async () => {
+      const mockedResponse = {
+        data: {
+          models: [],
+        },
+      };
+      (axios.get as any).mockResolvedValue(mockedResponse);
+      const response = await ttsWrapping.getModels();
+      expect(response).toEqual({
+        models: [],
+      });
     });
   });
 });

@@ -2,6 +2,7 @@ import { config } from 'dotenv';
 // load .env.local file
 config({ path: '.env.local' });
 import { Config } from '../config/config';
+Config.init();
 import { Telegraf } from 'telegraf';
 import { GeneralCommands } from '../bot/general/general.commands';
 import { GeneralBot } from '../bot/general.bot';

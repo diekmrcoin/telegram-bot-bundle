@@ -2,6 +2,7 @@ import http from 'serverless-http';
 
 import 'dotenv/config';
 import { Config } from '../config/config';
+Config.init();
 import { WordleBot } from '../bot/wordle.bot';
 import { Telegraf } from 'telegraf';
 import { WordleCommands } from '../bot/wordle/wordle.commands';

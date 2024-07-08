@@ -3,6 +3,7 @@ import { config } from 'dotenv';
 config({ path: '.env.local' });
 import { WordleBot } from '../bot/wordle.bot';
 import { Config } from '../config/config';
+Config.init();
 import { Telegraf } from 'telegraf';
 import { WordleCommands } from '../bot/wordle/wordle.commands';
 Config.validate(false);

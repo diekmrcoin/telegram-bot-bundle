@@ -1,4 +1,4 @@
-import { ChatRoles } from "./chat-roles.enum";
+import { ChatRoles } from './chat-roles.enum';
 
 export interface ChainItem {
   role: ChatRoles;

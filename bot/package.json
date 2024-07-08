@@ -11,7 +11,8 @@
     "deploy": "npm run build && bash ./scripts/deploy.sh synergysys-dev-lmb-ai-bot",
     "clean": "rimraf dist",
     "prettier": "prettier --write src/**/*.ts",
-    "test": "jest"
+    "test": "jest",
+    "test:e2e": "jest --testMatch='**/*.e2e-spec.ts'"
   },
   "author": "Diego Maroto",
   "license": "MIT",
@@ -20,6 +21,7 @@
     "@aws-sdk/client-dynamodb": "^3.602.0",
     "axios": "^1.7.2",
     "dotenv": "^16.4.5",
+    "elevenlabs": "^0.8.2",
     "serverless-http": "^3.2.0",
     "telegraf": "^4.16.3",
     "uuid": "^10.0.0"
