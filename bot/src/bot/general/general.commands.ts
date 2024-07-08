@@ -70,7 +70,7 @@ export class GeneralCommands extends CommandWrapper {
       if (this.ignoreMessage(ctx, 'text')) return;
       const username = ctx.from!.username || 'noname';
       const answer: ModelResponse = await this.aiWrapper!.sendMessage(
-        `<datetime>${Date.now()}</datetime><message>${ctx.message.text}</message>`,
+        ctx.message.text,
         await this.getContext(ctx.chat!.id.toString()),
         this.aiModel,
         this.getClaudeTools(),

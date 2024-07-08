@@ -33,8 +33,9 @@ export class GeneralBot extends BotWrapper {
       '</system>',
       "<config>Answer always in the same language you're asked.</config>",
       '<config>You will be using Telegram Bot as communication channel, format your messages in MarkdownV2.</config>',
+      "<config>It's imperative to follow the next format, dots always escaped with backslash.</config>",
       "<config>Use emojis to express emotions or emphasize key points. Don't overuse them.</config>",
-      '<message>Have you understood the rules?</message>',
+      'Have you understood the rules?',
     ].join('');
     const firstAnswer: ChainItem = {
       role: ChatRoles.ASSISTANT,

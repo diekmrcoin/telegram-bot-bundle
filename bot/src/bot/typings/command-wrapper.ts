@@ -56,7 +56,7 @@ export abstract class CommandWrapper {
       } else {
         item = {
           role: message.role as ChatRoles,
-          content: `<datetime>${message.dateTime}</datetime><message>${message.message}</message>`,
+          content: message.message,
         };
       }
       return item;
