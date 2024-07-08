@@ -121,7 +121,7 @@ export class GeneralCommands extends CommandWrapper {
       return false;
     }
     // if user included in allowed ids, allow all commands
-    if (Config.TELEGRAM_ALLOWED_CHAT_IDS.includes(ctx.from!.id)) {
+    if (ctx.chat!.id > 0 && Config.TELEGRAM_ALLOWED_CHAT_IDS.includes(ctx.from!.id)) {
       return false;
     }
     return true;
