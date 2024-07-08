@@ -2,7 +2,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { TextBlock } from '@anthropic-ai/sdk/resources/messages';
 import { ChatRoles } from './typings/chat-roles.enum';
 import { ClaudeModels } from './typings/models.emun';
-import { ChainItem } from './typings/chain-item';
+import { ChainItem, ChainItemTool } from './typings/chain-item';
 import { ModelResponse } from './typings/model.response';
 
 export class ClaudeWrapping {
@@ -17,7 +17,7 @@ export class ClaudeWrapping {
 
   async sendMessage(
     message: string,
-    prevChain: ChainItem[],
+    prevChain: (ChainItem | ChainItemTool)[],
     model: ClaudeModels,
     tools: Anthropic.Messages.Tool[],
   ): Promise<ModelResponse> {
@@ -42,6 +42,7 @@ export class ClaudeWrapping {
     return {
       usage: answer.usage,
       message: (answer.content[0] as TextBlock).text || 'error',
+      tool: answer.content[1] ? (answer.content[1] as ModelResponse['tool']) : undefined,
     };
   }
 }

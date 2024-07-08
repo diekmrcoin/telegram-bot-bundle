@@ -8,7 +8,22 @@ export class ChatItem {
     public readonly role: string,
     public readonly TTL?: number,
     public readonly dateTime?: string,
+    public readonly type?: string,
+    public readonly toolUseId?: string,
   ) {}
+
+  public static fromObject(obj: ChatItem): ChatItem {
+    return new ChatItem(
+      obj.chatId,
+      obj.username,
+      obj.message,
+      obj.role,
+      obj.TTL,
+      obj.dateTime,
+      obj.type,
+      obj.toolUseId,
+    );
+  }
 
   public static fromDynamoItem(item: any): ChatItem {
     return new ChatItem(
@@ -18,17 +33,30 @@ export class ChatItem {
       item.role.S,
       item.TTL ? item.TTL.N : undefined,
       item.dateTime.S,
+      item.type ? item.type.S : undefined,
+      item.toolUseId ? item.toolUseId.S : undefined,
     );
   }
 
   public toDynamoItem(): Record<string, AttributeValue> {
-    return {
+    const item: Record<string, AttributeValue> = {
       username: { S: this.username },
       chatId: { S: this.chatId },
       message: { S: this.message },
       role: { S: this.role },
-      TTL: this.TTL ? { N: this.TTL.toString() } : (undefined as any), // undefined values will be removed in the parser
-      dateTime: { S: this.dateTime! },
+      dateTime: { S: this.dateTime! }, // Assuming dateTime always exists
     };
+
+    if (this.TTL) {
+      item.TTL = { N: this.TTL.toString() };
+    }
+    if (this.type) {
+      item.type = { S: this.type };
+    }
+    if (this.toolUseId) {
+      item.toolUseId = { S: this.toolUseId };
+    }
+
+    return item;
   }
 }

@@ -5,7 +5,7 @@ import { ClaudeModels } from '../../ai/anthropic/typings/models.emun';
 import { ModelResponse } from '../../ai/anthropic/typings/model.response';
 import { message } from 'telegraf/filters';
 import Anthropic from '@anthropic-ai/sdk';
-import { ChainItem } from '../../ai/anthropic/typings/chain-item';
+import { ChainItem, ChainItemTool } from '../../ai/anthropic/typings/chain-item';
 import { ChatItem } from '../memory/typings/chat-item';
 import { ChatRoles } from '../../ai/anthropic/typings/chat-roles.enum';
 import { TTSWrapper } from '../../ai/elevenlabs/tts-wrapper';
@@ -29,7 +29,7 @@ export class GeneralCommands extends CommandWrapper {
       this.aiModel,
       this.getClaudeTools(),
     );
-    ctx.reply(answer.message, { parse_mode: 'HTML' });
+    await ctx.reply(answer.message, { parse_mode: 'MarkdownV2' });
   }
   async helpCommand(ctx: Context): Promise<void> {
     const listCommands: string[] = [];
@@ -45,19 +45,19 @@ export class GeneralCommands extends CommandWrapper {
       this.aiModel,
       this.getClaudeTools(),
     );
-    ctx.reply(answer.message, { parse_mode: 'HTML' });
+    await ctx.reply(answer.message, { parse_mode: 'MarkdownV2' });
   }
-  quitCommand(ctx: Context): void {
+  async quitCommand(ctx: Context): Promise<void> {
     if (this.ignoreMessage(ctx, 'quit')) return;
     console.log(`User ${ctx.chat!.id} quit the chat`);
     this.memory!.deleteMessages(ctx.chat!.id.toString());
-    ctx.reply('Chat ended. If you need help, just type /start');
+    await ctx.reply('Chat ended. If you need help, just type /start');
   }
   registerCommands(): void {
     this.bot.command('start', this.startCommand.bind(this));
-    this.bot.command('id', (ctx) => {
+    this.bot.command('id', async (ctx) => {
       if (this.ignoreMessage(ctx, 'id')) return;
-      ctx.reply(ctx.chat!.id.toString());
+      await ctx.reply(ctx.chat!.id.toString());
     });
     this.bot.command('help', this.helpCommand.bind(this));
     this.bot.command('tts', async (ctx) => {
@@ -70,7 +70,7 @@ export class GeneralCommands extends CommandWrapper {
       if (this.ignoreMessage(ctx, 'text')) return;
       const username = ctx.from!.username || 'noname';
       const answer: ModelResponse = await this.aiWrapper!.sendMessage(
-        ctx.message.text,
+        `<datetime>${Date.now()}</datetime><message>${ctx.message.text}</message>`,
         await this.getContext(ctx.chat!.id.toString()),
         this.aiModel,
         this.getClaudeTools(),
@@ -80,16 +80,54 @@ export class GeneralCommands extends CommandWrapper {
         new ChatItem(ctx.chat!.id.toString(), 'Alice', answer.message, ChatRoles.ASSISTANT),
       ];
       await this.memory!.addMessages(messages);
-      ctx.reply(answer.message, { parse_mode: 'HTML' });
+      await ctx.reply(answer.message, { parse_mode: 'MarkdownV2' });
+      try {
+        // if (answer.tool?.name === 'generateAudio') {
+        //   // FIXME: the delay is so long that Telegram is trying again and again the request
+        //   // await this.sendAudio(ctx, answer.tool.input.text, 1024);
+        //   await this.memory!.addMessages([
+        //     ChatItem.fromObject({
+        //       chatId: ctx.chat!.id.toString(),
+        //       username: username,
+        //       message: '<system>Audio sent</system>',
+        //       role: ChatRoles.USER,
+        //       type: 'tool_result',
+        //       toolUseId: answer.tool.id,
+        //     } as ChatItem),
+        //     new ChatItem(ctx.chat!.id.toString(), 'Alice', '...', ChatRoles.ASSISTANT),
+        //   ]);
+        // }
+      } catch (err) {
+        await ctx.reply('Error creating the audio.');
+        console.error('Error sending audio', err);
+        console.error((err as Error).stack);
+      }
     });
   }
 
   getClaudeTools(): Anthropic.Messages.Tool[] {
-    return [];
+    // * generateAudio: callable when the user wants the answer to be in audio format
+    return [
+      // {
+      //   name: 'generateAudio',
+      //   description: 'Generate an audio file with the answer',
+      //   input_schema: {
+      //     type: 'object',
+      //     properties: {
+      //       text: {
+      //         type: 'string',
+      //         description: 'The text to convert to audio',
+      //       },
+      //     },
+      //     required: ['text'],
+      //   },
+      // },
+    ];
   }
 
-  getContext(chatId: string): Promise<ChainItem[]> {
-    return this.formatMessages(chatId);
+  async getContext(chatId: string): Promise<(ChainItem | ChainItemTool)[]> {
+    const chain = await this.formatMessages(chatId);
+    return chain;
   }
 
   setTtsWrapper(ttsWrapper: TTSWrapper) {
@@ -100,10 +138,10 @@ export class GeneralCommands extends CommandWrapper {
     return this.ttsWrapper!.getAudio(text);
   }
 
-  async sendAudio(ctx: Context, text: string): Promise<void> {
+  async sendAudio(ctx: Context, text: string, maxLength = 64): Promise<void> {
     // text max length is 32 characters
-    if (text.length > 64) {
-      ctx.reply('Text is too long, max 64 characters');
+    if (text.length > maxLength) {
+      await ctx.reply(`Text is too long, max length is ${maxLength} characters`);
       return;
     }
     text = text.trim();

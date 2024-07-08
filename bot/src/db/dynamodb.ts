@@ -17,7 +17,9 @@ export class DynamoDBWrapper {
   }
   private genId(i = 0): string {
     // rangeKey is datetime + 5 random number to avoid conflicts with
-    return `${new Date().getTime()}_${i}_${Math.floor(Math.random() * 100000)}`;
+    const id = `${new Date().getTime()}_${i}_${Math.floor(Math.random() * 100000)}`;
+    // sometimes the it hasn't all the chars, fill with 0 at the end, 21 of length
+    return id.padEnd(21, '0');
   }
 
   async addChatRecord(data: Record<string, AttributeValue>) {
@@ -39,10 +41,12 @@ export class DynamoDBWrapper {
     } catch (error) {
       console.error(`Error al añadir registro: ${error}`);
       console.error((error as Error).stack);
+      console.error('Error item:', params.Item);
     }
   }
 
   async addChatRecords(dataItems: Record<string, AttributeValue>[]) {
+    let itemTemp = null;
     const chunkSize = 25; // DynamoDB batchWrite limit
     for (let i = 0; i < dataItems.length; i += chunkSize) {
       const chunk = dataItems.slice(i, i + chunkSize);
@@ -50,7 +54,7 @@ export class DynamoDBWrapper {
       const requestItems = chunk.map((data): WriteRequest => {
         const now = new Date();
         const id = this.genId(elemIndex++);
-        return {
+        const item = {
           PutRequest: {
             Item: {
               ...data,
@@ -60,6 +64,8 @@ export class DynamoDBWrapper {
             },
           },
         };
+        itemTemp = item.PutRequest.Item;
+        return item;
       });
 
       const params: BatchWriteItemCommandInput = {
@@ -74,6 +80,7 @@ export class DynamoDBWrapper {
       } catch (error) {
         console.error(`Error al añadir registros: ${error}`);
         console.error((error as Error).stack);
+        console.error('Error item:', itemTemp);
       }
     }
   }
@@ -95,7 +102,7 @@ export class DynamoDBWrapper {
       const data = await this.client.query(params);
       if (!data || Number(data.Count) < 1) return [];
       if (!data.Items) return [];
-      return data.Items.sort((a, b) => Number(a.dateTime.S) - Number(b.dateTime.S));
+      return data.Items;
     } catch (error) {
       console.error(`Error al obtener registro: ${error}`);
       console.error((error as Error).stack);

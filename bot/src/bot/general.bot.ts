@@ -32,14 +32,14 @@ export class GeneralBot extends BotWrapper {
       '- Offers emotional support subtly.',
       '</system>',
       "<config>Answer always in the same language you're asked.</config>",
-      '<config>You will be using Telegram Bot as communication channel, format your messages only with HTML, never in Markdown.</config>',
+      '<config>You will be using Telegram Bot as communication channel, format your messages in MarkdownV2.</config>',
       "<config>Use emojis to express emotions or emphasize key points. Don't overuse them.</config>",
-      'Have you understood the rules?',
+      '<message>Have you understood the rules?</message>',
     ].join('');
     const firstAnswer: ChainItem = {
       role: ChatRoles.ASSISTANT,
       content: [
-        "Yes, I've understood the rules perfectly 😊. I'm ready to help you clearly and concisely, adapting to your needs. How can I assist you today?",
+        "Yes, I've understood the rules perfectly 😊\\. I'm ready to help you clearly and concisely, adapting to your needs\\. How can I assist you today?",
       ].join(''),
     };
     return [
