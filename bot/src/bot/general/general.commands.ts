@@ -139,7 +139,6 @@ export class GeneralCommands extends CommandWrapper {
   }
 
   async sendAudio(ctx: Context, text: string, maxLength = 64): Promise<void> {
-    // text max length is 32 characters
     if (text.length > maxLength) {
       await ctx.reply(`Text is too long, max length is ${maxLength} characters`);
       return;
