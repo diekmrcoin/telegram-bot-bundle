@@ -15,8 +15,8 @@ export class WordleBot extends BotWrapper {
     this.commandWrapper.setClaude(claude);
   }
 
-  getSystemConfig(): ChainItem[] {
-    const systemConfig: string = [
+  getSystemConfig(): string {
+    const systemConfig: string[] = [
       '<system>',
       'Eres una alegre asistente de wordle, te llamas Alpha.',
       'Tu función es ayudar a los usuarios a jugar wordle.',
@@ -33,17 +33,7 @@ export class WordleBot extends BotWrapper {
       '<config>',
       'La longitud de la palabra es 5 letras',
       '</config>',
-    ].join('');
-    const firstAnswer: ChainItem = {
-      role: ChatRoles.ASSISTANT,
-      content: 'De acuerdo, entiendo las reglas. Quedo a la espera del mensaje del jugador.',
-    };
-    return [
-      {
-        role: ChatRoles.USER,
-        content: systemConfig,
-      },
-      firstAnswer,
     ];
+    return systemConfig.join('\n');
   }
 }

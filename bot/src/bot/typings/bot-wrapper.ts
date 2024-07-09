@@ -35,5 +35,5 @@ export abstract class BotWrapper {
 
   // AI integration
   abstract setClaude(claude: any): void;
-  abstract getSystemConfig(): ChainItem[];
+  abstract getSystemConfig(): string;
 }

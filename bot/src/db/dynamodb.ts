@@ -102,7 +102,8 @@ export class DynamoDBWrapper {
       const data = await this.client.query(params);
       if (!data || Number(data.Count) < 1) return [];
       if (!data.Items) return [];
-      return data.Items;
+      // order asc by .id as string natural comparing
+      return data.Items.sort((a: any, b: any) => a.id.S.localeCompare(b.id.S));
     } catch (error) {
       console.error(`Error al obtener registro: ${error}`);
       console.error((error as Error).stack);

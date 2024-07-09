@@ -7,8 +7,8 @@ import { ModelResponse } from './typings/model.response';
 
 export class ClaudeWrapping {
   private anthropic: Anthropic;
-  private systemConfig: any;
-  constructor(apiKey: string, systemConfig: ChainItem[]) {
+  private systemConfig: string;
+  constructor(apiKey: string, systemConfig: string) {
     this.anthropic = new Anthropic({
       apiKey: apiKey,
     });
@@ -17,12 +17,11 @@ export class ClaudeWrapping {
 
   async sendMessage(
     message: string,
-    prevChain: (ChainItem | ChainItemTool)[],
+    prevChain: ChainItem[],
     model: ClaudeModels,
     tools: Anthropic.Messages.Tool[],
   ): Promise<ModelResponse> {
-    const chain = [
-      ...this.systemConfig,
+    const chain: ChainItem[] = [
       ...prevChain,
       {
         role: ChatRoles.USER,
@@ -31,6 +30,7 @@ export class ClaudeWrapping {
     ];
     const answer: Anthropic.Messages.Message = await this.anthropic.messages.create({
       max_tokens: 1024,
+      system: this.systemConfig,
       messages: chain,
       model: model,
       tools: tools,

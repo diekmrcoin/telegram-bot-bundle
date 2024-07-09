@@ -22,7 +22,7 @@ export class Memory {
   }
 
   async getMessages(chatId: string): Promise<ChatItem[]> {
-    const items = await this.db.getChatRecord(chatId, 20);
+    const items = await this.db.getChatRecord(chatId, 10);
     return items.map((item) => ChatItem.fromDynamoItem(item));
   }
 

@@ -71,7 +71,7 @@ export class GeneralCommands extends CommandWrapper {
       const username = ctx.from!.username || 'noname';
       const answer: ModelResponse = await this.aiWrapper!.sendMessage(
         ctx.message.text,
-        await this.getContext(ctx.chat!.id.toString()),
+        (await this.getContext(ctx.chat!.id.toString())) as ChainItem[],
         this.aiModel,
         this.getClaudeTools(),
       );
