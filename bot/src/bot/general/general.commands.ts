@@ -153,8 +153,8 @@ export class GeneralCommands extends CommandWrapper {
     if (Config.TELEGRAM_ALLOWED_CHAT_IDS.includes(ctx.chat!.id) && command === 'tts') {
       return false;
     }
-    // if group (negative chat id) only allow id command
-    if (ctx.chat!.id < 0 && command === 'id') {
+    // allow id command only for all chats
+    if (command === 'id') {
       return false;
     }
     // if user included in allowed ids, allow all commands
