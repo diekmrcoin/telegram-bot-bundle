@@ -63,7 +63,7 @@ export class GeneralCommands extends CommandWrapper {
     this.bot.command('tts', async (ctx) => {
       if (this.ignoreMessage(ctx, 'tts')) return;
       const text = ctx.message.text.replace('/tts ', '');
-      await this.sendAudio(ctx, text);
+      await this.sendAudio(ctx, text, 128);
     });
     this.bot.command('quit', this.quitCommand.bind(this));
     this.bot.on(message('text'), async (ctx) => {
