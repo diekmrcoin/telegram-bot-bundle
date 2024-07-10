@@ -9,7 +9,10 @@ export interface SQSRecord {
   attributes: {
     ApproximateReceiveCount: string;
     SentTimestamp: string;
+    SequenceNumber?: string; // Only for FIFO queues
+    MessageGroupId?: string; // Only for FIFO queues
     SenderId: string;
+    MessageDeduplicationId?: string; // Only for FIFO queues
     ApproximateFirstReceiveTimestamp: string;
   };
   messageAttributes: {
