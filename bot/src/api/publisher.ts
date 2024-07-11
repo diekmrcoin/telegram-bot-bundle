@@ -14,7 +14,7 @@ export const handler = async (event: APIGatewayV2Event): Promise<HttpAbstractEve
     // Parse the message from the API Gateway event
     const body = JSON.parse(event.body); // Assuming the message to publish is in the request body
     const bodySecret = body.secret;
-    if (bodySecret !== tempSecret) {
+    if (bodySecret !== tempSecret || true) {
       return HttpFactory.createUnauthorizedResponse('Unauthorized');
     }
     const message = JSON.stringify({ message: body.message, timestamp: Date.now() });
