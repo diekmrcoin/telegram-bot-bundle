@@ -19,11 +19,19 @@ variable "lambda_function" {
 }
 
 output "id" {
+  value = aws_apigatewayv2_api.apigatewayv2_api.id
+}
+
+output "name" {
   value = aws_apigatewayv2_api.apigatewayv2_api.name
 }
 
 output "domain_name" {
   value = substr(aws_apigatewayv2_api.apigatewayv2_api.api_endpoint, 8, -1)
+}
+
+output "stage" {
+  value = aws_apigatewayv2_stage.apigatewayv2_stage.id
 }
 
 resource "aws_apigatewayv2_api" "apigatewayv2_api" {

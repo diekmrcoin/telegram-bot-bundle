@@ -76,7 +76,7 @@ variable "function_url" {
 variable "reserved_concurrent_executions" {
   description = "The amount of reserved concurrent executions for this lambda function. 1000 by default."
   type        = number
-  default     = 1000
+  default     = -1
 }
 
 variable "attach_policies" {
@@ -226,5 +226,4 @@ resource "aws_iam_role_policy_attachment" "custom_policies_attachment" {
 resource "aws_cloudwatch_log_group" "lambda_log_group" {
   name              = "/aws/lambda/${aws_lambda_function.lambda_function.function_name}"
   retention_in_days = var.cloudwatch_retention_days
-  depends_on        = [aws_lambda_function.lambda_function]
 }
