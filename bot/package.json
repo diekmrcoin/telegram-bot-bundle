@@ -8,7 +8,9 @@
     "start:wordle": "ts-node src/functions/wordle.local.ts",
     "start:prod": "node dist/bot.js",
     "build": "rimraf dist && esbuild src/functions/general.lambda.ts --legal-comments=none --bundle --platform=node --target=node20 --minify --outfile=dist/lambda.js",
+    "build:publisher": "rimraf dist && esbuild src/api/publisher.ts --legal-comments=none --bundle --platform=node --target=node20 --minify --outfile=dist/publisher.js",
     "deploy": "npm run build && bash ./scripts/deploy.sh synergysys-dev-lmb-ai-bot",
+    "deploy:publisher": "npm run build:publisher && bash ./scripts/deploy.publisher.sh synergysys-dev-lmb-publisher",
     "clean": "rimraf dist",
     "prettier": "prettier --write src/**/*.ts",
     "test": "jest",
@@ -19,6 +21,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.24.0",
     "@aws-sdk/client-dynamodb": "^3.602.0",
+    "@aws-sdk/client-sqs": "^3.614.0",
     "axios": "^1.7.2",
     "dotenv": "^16.4.5",
     "elevenlabs": "^0.8.2",

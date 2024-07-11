@@ -12,9 +12,11 @@ export class DynamoDBWrapper {
   private tableName = 'synergysys-dev-dynamo-ai-bot-memory';
   private region = 'eu-west-3';
   private client: DynamoDB;
+  
   constructor() {
     this.client = new DynamoDB({ region: this.region, credentials: Config.AWS_CREDENTIALS as any });
   }
+
   private genId(i = 0): string {
     // rangeKey is datetime + 5 random number to avoid conflicts with
     const id = `${new Date().getTime()}_${i}_${Math.floor(Math.random() * 100000)}`;
