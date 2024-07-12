@@ -9,10 +9,10 @@ import { DynamoDBWrapper } from './dynamodb';
 
 export class ChatDynamoDBWrapper {
   private wrapper: DynamoDBWrapper;
-  private _tableName = 'synergysys-dev-dynamo-ai-bot-memory';
+  readonly tableName = 'synergysys-dev-dynamo-ai-bot-memory';
   constructor(wrapper?: DynamoDBWrapper, tableName?: string) {
     this.wrapper = wrapper || new DynamoDBWrapper();
-    this.wrapper.tableName = tableName || this._tableName;
+    this.wrapper.tableName = tableName || this.tableName;
   }
 
   genId(i = 0): string {

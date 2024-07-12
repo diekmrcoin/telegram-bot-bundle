@@ -1,13 +1,13 @@
-import { LoginDynamoDBWrapper } from '../../../db/login.dynamodb';
+import { ApiDynamoDBWrapper } from '../../../db/api.dynamodb';
 import { SESWrapper } from '../../../mail/ses';
 
 export class LoginService {
   private client: SESWrapper;
-  private dynamodb: LoginDynamoDBWrapper;
+  private dynamodb: ApiDynamoDBWrapper;
   public _debug = false;
-  constructor(client?: SESWrapper, dynamodb?: LoginDynamoDBWrapper) {
+  constructor(dynamodb?: ApiDynamoDBWrapper, client?: SESWrapper) {
+    this.dynamodb = dynamodb || new ApiDynamoDBWrapper();
     this.client = client || new SESWrapper();
-    this.dynamodb = dynamodb || new LoginDynamoDBWrapper();
   }
 
   setDebug(debug: boolean) {
@@ -54,21 +54,17 @@ export class LoginService {
     }
   }
 
-  private async addLoginRecord(email: string, code: string) {
-    const data = {
-      email: { S: email },
-      code: { S: code },
-    };
-    await this.dynamodb.addRecord(data);
+  private async addLoginRecord(email: string, code: string): Promise<void> {
+    return await this.dynamodb.addLoginRecord(email, code);
   }
 
   private async getLoginRecord(email: string): Promise<string[]> {
-    const data = await this.dynamodb.getRecord(email);
+    const data = await this.dynamodb.getLoginRecords(email);
     return data.map((item) => item.code.S!).filter((code) => !!code);
   }
 
   private async verifyCode(email: string, code: string): Promise<boolean> {
-    const codes = await this.getLoginRecord(email);
-    return codes.includes(code);
+    const record = await this.dynamodb.getLoginRecord(email, code);
+    return !!record;
   }
 }
