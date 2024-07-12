@@ -3,12 +3,6 @@ variable "prefix" { type = string }
 variable "route53_zone" { type = string }
 variable "route53_zone_id" { type = string }
 
-module "bot-general-conversation" {
-  source      = "./components/bot/general-conversation"
-  prefix      = var.prefix
-  environment = var.environment
-}
-
 module "api" {
   source      = "./components/api"
   prefix      = var.prefix
