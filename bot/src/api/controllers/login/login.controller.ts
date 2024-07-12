@@ -15,6 +15,7 @@ export class LoginController {
 
   protected registerRoutes() {
     this.app.post(`${this.controllerPath}/request-login-code`, this.requestLoginCode.bind(this));
+    this.app.post(`${this.controllerPath}/verify-login`, this.verifyLogin.bind(this));
   }
 
   checkAndSetDebug(req: Request) {
@@ -41,6 +42,21 @@ export class LoginController {
       return res.send({ message: 'Login code sent' });
     } else {
       return res.status(500).send({ message: 'Failed to send login code' });
+    }
+  }
+
+  async verifyLogin(req: Request, res: Response) {
+    this.checkAndSetDebug(req);
+    const email = req.body.email;
+    const code = req.body.code;
+    if (!email || !code) {
+      return res.status(400).send({ message: 'Email and code are required' });
+    }
+    const success = await this.loginService.login(email, code);
+    if (success) {
+      return res.send({ message: 'Login successful' });
+    } else {
+      return res.status(403).send({ message: 'Login failed' });
     }
   }
 }
