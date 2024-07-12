@@ -6,7 +6,6 @@ Config.init();
 import { WordleBot } from '../bot/wordle.bot';
 import { Telegraf } from 'telegraf';
 import { WordleCommands } from '../bot/wordle/wordle.commands';
-Config.validate(false);
 const wordleBot = new WordleBot(
   'Wordle',
   'Wordle game bot',

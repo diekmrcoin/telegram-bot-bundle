@@ -12,6 +12,7 @@ export class Config {
     secretAccessKey: '',
   };
   protected static _PORT: number = 3000;
+  protected static _QUEUE_URL: string = '';
   protected static _LOGIN_ALLOWED_EMAILS: string[] = [];
 
   public static init() {
@@ -32,6 +33,7 @@ export class Config {
       secretAccessKey: process.env.AWS_SECRET_KEY || '',
     };
     Config._PORT = Number(process.env.PORT) || 3000;
+    Config._QUEUE_URL = process.env.QUEUE_URL || '';
     Config._LOGIN_ALLOWED_EMAILS = (process.env.LOGIN_ALLOWED_EMAILS || '').split(',').filter((email) => email !== '');
   }
 
@@ -71,28 +73,7 @@ export class Config {
     return Config._LOGIN_ALLOWED_EMAILS;
   }
 
-  public static validate(fail: boolean): boolean {
-    if (!Config.TELEGRAM_BOT_TOKEN) {
-      if (fail) {
-        console.error('TELEGRAM_BOT_TOKEN is required');
-        throw new Error('TELEGRAM_BOT_TOKEN is required');
-      }
-      return false;
-    }
-    if (!Config.CLAUDE_API_KEY) {
-      if (fail) {
-        console.error('CLAUDE_API_KEY is required');
-        throw new Error('CLAUDE_API_KEY is required');
-      }
-      return false;
-    }
-    if (!Config.TELEGRAM_SECRET_TOKEN) {
-      if (fail) {
-        console.error('TELEGRAM_SECRET_TOKEN is required');
-        throw new Error('TELEGRAM_SECRET_TOKEN is required');
-      }
-      return false;
-    }
-    return true;
+  public static get QUEUE_URL(): string {
+    return Config._QUEUE_URL;
   }
 }
