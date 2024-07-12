@@ -1,9 +1,10 @@
-import { DynamoDBWrapper } from '../../db/dynamodb';
+
+import { ChatDynamoDBWrapper } from '../../db/chat.dynamodb';
 import { ChatItem } from './typings/chat-item';
 
 export class Memory {
-  private db: DynamoDBWrapper;
-  constructor(db: DynamoDBWrapper) {
+  private db: ChatDynamoDBWrapper;
+  constructor(db: ChatDynamoDBWrapper) {
     this.db = db;
   }
 
