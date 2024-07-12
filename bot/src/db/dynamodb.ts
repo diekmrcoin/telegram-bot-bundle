@@ -12,9 +12,9 @@ export class DynamoDBWrapper {
   private tableName = 'synergysys-dev-dynamo-ai-bot-memory';
   private region = 'eu-west-3';
   private client: DynamoDB;
-  
-  constructor() {
-    this.client = new DynamoDB({ region: this.region, credentials: Config.AWS_CREDENTIALS as any });
+
+  constructor(client?: DynamoDB) {
+    this.client = client || new DynamoDB({ region: this.region, credentials: Config.AWS_CREDENTIALS as any });
   }
 
   private genId(i = 0): string {

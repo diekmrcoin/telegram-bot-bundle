@@ -1,7 +1,7 @@
 // lambda that gets apigatewayv2 event and publishes a message to a topic
 
-import { HttpAbstractEvent, HttpFactory } from '../http/http.lambda';
-import { APIGatewayV2Event } from '../http/typings/apigatewayv2.event';
+import { HttpAbstractEvent, HttpFactory } from '../../http/http.lambda';
+import { APIGatewayV2Event } from '../../http/typings/apigatewayv2.event';
 import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs';
 const tempSecret = '51fcf02a5c2a43094a879d5dddcf9cd6f9b86c2f477df3008187607fd8ee48ab';
 // This is your AWS Lambda handler

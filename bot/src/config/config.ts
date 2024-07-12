@@ -11,6 +11,8 @@ export class Config {
     accessKeyId: '',
     secretAccessKey: '',
   };
+  protected static _PORT: number = 3000;
+  protected static _LOGIN_ALLOWED_EMAILS: string[] = [];
 
   public static init() {
     Config._TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '';
@@ -29,6 +31,8 @@ export class Config {
       accessKeyId: process.env.AWS_ACCESS_KEY || '',
       secretAccessKey: process.env.AWS_SECRET_KEY || '',
     };
+    Config._PORT = Number(process.env.PORT) || 3000;
+    Config._LOGIN_ALLOWED_EMAILS = (process.env.LOGIN_ALLOWED_EMAILS || '').split(',').filter((email) => email !== '');
   }
 
   public static get TELEGRAM_BOT_TOKEN(): string {
@@ -57,6 +61,14 @@ export class Config {
 
   public static get AWS_CREDENTIALS(): { accessKeyId: string; secretAccessKey: string } | undefined {
     return Config._AWS_CREDENTIALS.accessKeyId ? Config._AWS_CREDENTIALS : undefined;
+  }
+
+  public static get PORT(): number {
+    return Config._PORT;
+  }
+
+  public static get LOGIN_ALLOWED_EMAILS(): string[] {
+    return Config._LOGIN_ALLOWED_EMAILS;
   }
 
   public static validate(fail: boolean): boolean {
