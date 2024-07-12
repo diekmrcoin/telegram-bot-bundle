@@ -8,12 +8,15 @@ import { GeneralCommands } from '../bot/general/general.commands';
 import { GeneralBot } from '../bot/general.bot';
 import { Memory } from '../bot/memory/memory';
 import { ChatDynamoDBWrapper } from '../db/chat.dynamodb';
-Config.validate(true);
+import { TTSWrapper } from '../ai/elevenlabs/tts-wrapper';
+
 const generalCommands = new GeneralCommands(new Telegraf(Config.TELEGRAM_BOT_TOKEN));
 const db = new ChatDynamoDBWrapper();
 const memory = new Memory(db);
 generalCommands.setMemory(memory);
+generalCommands.setTtsWrapper(new TTSWrapper(Config.ELEVENLABS_API_KEY));
 const generalBot = new GeneralBot('General Bot', 'General bot for all users', generalCommands);
+
 generalBot.run();
 
 // Enable graceful stop

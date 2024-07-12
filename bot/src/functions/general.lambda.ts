@@ -9,7 +9,7 @@ import { GeneralBot } from '../bot/general.bot';
 import { Memory } from '../bot/memory/memory';
 import { TTSWrapper } from '../ai/elevenlabs/tts-wrapper';
 import { ChatDynamoDBWrapper } from '../db/chat.dynamodb';
-Config.validate(false);
+
 const generalCommands = new GeneralCommands(new Telegraf(Config.TELEGRAM_BOT_TOKEN));
 const db = new ChatDynamoDBWrapper();
 const memory = new Memory(db);
