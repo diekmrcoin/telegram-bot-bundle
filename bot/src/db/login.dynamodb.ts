@@ -3,14 +3,16 @@ import { DynamoDBWrapper } from './dynamodb';
 
 export class LoginDynamoDBWrapper {
   private wrapper: DynamoDBWrapper;
-  constructor(wrapper?: DynamoDBWrapper) {
+  private _tableName = 'synergysys-dev-dynamo-api';
+  constructor(wrapper?: DynamoDBWrapper, tableName?: string) {
     this.wrapper = wrapper || new DynamoDBWrapper();
+    this.wrapper.tableName = tableName || this._tableName;
   }
 
   async addRecord(data: Record<string, AttributeValue>) {
     const now = new Date();
     // TTL 12 hours, in seconds
-    const TTL = Math.floor((now.getTime() + 12 * 60 * 60) / 1000);
+    const TTL = Math.floor((now.getTime() + 12 * 60 * 60 * 1000) / 1000);
     const email = data.email!.S!;
     const code = data.code!.S!;
     const params: PutItemCommandInput = {

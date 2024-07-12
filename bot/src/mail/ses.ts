@@ -27,7 +27,7 @@ export class SESWrapper {
           Data: subject,
         },
       },
-      Source: `"AI-Proxy ${alias}" ${from}${this.identity}`,
+      Source: `"AI-Proxy ${alias}" <${from}${this.identity}>`,
     };
 
     return this.sesClient.send(new SendEmailCommand(params));

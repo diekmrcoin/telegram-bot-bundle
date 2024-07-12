@@ -17,6 +17,19 @@ locals {
   domain_name = "api.ai-proxy.${var.route53.zone}"
 }
 
+module "api_dynamodb" {
+  source      = "../../modules/dynamo_db"
+  prefix      = var.prefix
+  name        = "api"
+  environment = var.environment
+  hash_key    = { name = "partition", type = "S" }
+  range_key   = { name = "id", type = "S" }
+  ttl = {
+    enabled        = true
+    attribute_name = "TTL"
+  }
+}
+
 module "queue" {
   source      = "./queue"
   prefix      = var.prefix
@@ -44,10 +57,26 @@ resource "aws_iam_policy" "api_lambda_permissions" {
           "ses:SendRawEmail",
         ],
         Resource = "arn:aws:ses:eu-west-1:215591118052:identity/diekmrcoin.com"
+      },
+      {
+        Effect = "Allow",
+        Action = [
+          "dynamodb:BatchGetItem",
+          "dynamodb:BatchWriteItem",
+          "dynamodb:DeleteItem",
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:Query",
+          "dynamodb:Scan",
+          "dynamodb:UpdateItem"
+        ],
+        Resource = module.api_dynamodb.arn
       }
     ]
   })
 }
+
+
 
 module "lambda" {
   source      = "../../modules/lambda"

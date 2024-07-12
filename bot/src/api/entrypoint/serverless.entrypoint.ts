@@ -1,7 +1,7 @@
 import serverless from 'serverless-http';
 import { app } from './express';
 
-import 'dotenv';
+import 'dotenv/config';
 import { Config } from '../../config/config';
 Config.init();
 
