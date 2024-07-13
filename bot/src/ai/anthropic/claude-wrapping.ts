@@ -2,7 +2,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { TextBlock } from '@anthropic-ai/sdk/resources/messages';
 import { ChatRoles } from './typings/chat-roles.enum';
 import { ClaudeModels } from './typings/models.emun';
-import { ChainItem, ChainItemTool } from './typings/chain-item';
+import { ChainItem } from './typings/chain-item';
 import { ModelResponse } from './typings/model.response';
 
 export class ClaudeWrapping {
@@ -35,9 +35,9 @@ export class ClaudeWrapping {
       model: model,
       tools: tools,
     });
-    console.log('answer', answer);
+    // console.log('answer', answer);
     if (answer.content[1]) {
-      console.log('content 1', JSON.stringify((answer.content[1] as any).input, null, 2));
+      // console.log('content 1', JSON.stringify((answer.content[1] as any).input, null, 2));
     }
     return {
       usage: answer.usage,

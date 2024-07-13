@@ -39,11 +39,6 @@ export class LoginService {
     return await this.dynamodb.addLoginRecord(email, code);
   }
 
-  private async getLoginRecord(email: string): Promise<string[]> {
-    const data = await this.dynamodb.getLoginRecords(email);
-    return data.map((item) => item.code.S!).filter((code) => !!code);
-  }
-
   private async verifyCode(email: string, code: string): Promise<boolean> {
     let record;
     try {

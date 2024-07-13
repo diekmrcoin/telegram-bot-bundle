@@ -18,10 +18,12 @@ import { HomeService } from '../controllers/home/home.service';
 import { ChatDynamoDBWrapper } from '../../db/chat.dynamodb';
 import { ConversationController } from '../controllers/conversation/conversation.controller';
 import { ConversationService } from '../controllers/conversation/conversation.service';
+import { Memory } from '../../bot/memory/memory';
 
 const db = DynamoDBFactory.create();
 const apiDb = new ApiDynamoDBWrapper(db);
 const chatDb = new ChatDynamoDBWrapper(db, apiDb.tableName);
+const memory = new Memory(chatDb);
 
 const app = express();
 app.use(cors());
@@ -31,6 +33,6 @@ app.use(helmet());
 new HomeController(app, new HomeService());
 new DebugController(app, new DebugService());
 new LoginController(app, new LoginService(apiDb));
-new ConversationController(app, new ConversationService());
+new ConversationController(app, new ConversationService(undefined, memory));
 
 export { app };

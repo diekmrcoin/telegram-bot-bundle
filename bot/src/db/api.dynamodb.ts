@@ -1,11 +1,11 @@
 import { AttributeValue } from '@aws-sdk/client-dynamodb';
-import { DynamoDBWrapper } from './dynamodb';
+import { DynamoDBFactory, DynamoDBWrapper } from './dynamodb';
 
 export class ApiDynamoDBWrapper {
   private wrapper: DynamoDBWrapper;
   readonly tableName = 'synergysys-dev-dynamo-api';
   constructor(wrapper?: DynamoDBWrapper, tableName?: string) {
-    this.wrapper = wrapper || new DynamoDBWrapper();
+    this.wrapper = wrapper || DynamoDBFactory.create();
     this.wrapper.tableName = tableName || this.tableName;
   }
 
@@ -20,11 +20,14 @@ export class ApiDynamoDBWrapper {
     return this.wrapper.addRecord(data, ttlSeconds);
   }
 
-  async getLoginRecords(email: string): Promise<Record<string, AttributeValue>[]> {
-    return this.wrapper.getRecordsByPartition(email);
-  }
-
   async getLoginRecord(email: string, code: string): Promise<Record<string, AttributeValue> | null> {
-    return this.wrapper.getRecordByPartitionAndId(email, code);
+    const record = await this.wrapper.getRecordByPartitionAndId('login_code', email);
+    if (!record) {
+      return null;
+    }
+    if (record.code.S === code) {
+      return record;
+    }
+    return null;
   }
 }

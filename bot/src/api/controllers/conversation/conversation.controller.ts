@@ -1,6 +1,9 @@
-import { Express, Request, Response } from 'express';
+import { Express, NextFunction, Request, Response } from 'express';
 import { ConversationService } from './conversation.service';
 import { HttpExpress } from '../../../http/http.express';
+import { TokenGuard } from '../../guards/token.guard';
+import { GetMessagesRequestDto, PublishMessageRequestDto } from './input.dto';
+import { ValidationError } from 'class-validator';
 
 export class ConversationController {
   private controllerPath = '/conversation';
@@ -14,25 +17,42 @@ export class ConversationController {
   }
 
   protected registerRoutes() {
-    // FIXME: Add class-validator for request body
-    // FIXME: Add guard decorators
-    // this.app.get(`${this.controllerPath}/messages`, this.getMessages.bind(this));
-    // this.app.post(`${this.controllerPath}/publish-message`, this.publishMessage.bind(this));
+    this.app.get(`${this.controllerPath}/messages/:chatId`, this.getMessages.bind(this));
+    this.app.post(`${this.controllerPath}/publish-message`, this.publishMessage.bind(this));
     // this.app.post(`${this.controllerPath}/check-response`, this.checkResponse.bind(this));
   }
 
+  @TokenGuard()
   async getMessages(req: Request, res: Response) {
-    return HttpExpress.notImplemented(res);
-  }
-
-  async publishMessage(req: Request, res: Response) {
-    // FIXME: Don't allow new messages when there is a message in progress
-    const message = req.body.message;
-    if (!message) {
-      return HttpExpress.badRequest(res, 'Message is required');
+    const input = new GetMessagesRequestDto({
+      chatId: req.params.chatId,
+    });
+    try {
+      await input.validate();
+    } catch (error) {
+      return HttpExpress.badRequest(res, (error as any).toString());
     }
     try {
-      const messageId = await this.conversationService.publishMessage(message);
+      const messages = await this.conversationService.getMessages(input.chatId);
+      return HttpExpress.ok(res, messages);
+    } catch (error) {
+      return HttpExpress.exception(res, error);
+    }
+  }
+
+  @TokenGuard()
+  async publishMessage(req: Request, res: Response, next: NextFunction) {
+    const input = new PublishMessageRequestDto({
+      message: req.body.message,
+      chatId: req.body.chatId,
+    });
+    try {
+      await input.validate();
+    } catch (error) {
+      return HttpExpress.badRequest(res, (error as ValidationError[]).toString());
+    }
+    try {
+      const messageId = await this.conversationService.publishMessage(JSON.stringify(input));
       return HttpExpress.ok(res, { messageId });
     } catch (error) {
       return HttpExpress.exception(res, error);

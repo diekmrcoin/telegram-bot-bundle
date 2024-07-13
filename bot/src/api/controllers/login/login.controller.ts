@@ -2,6 +2,7 @@ import { Express, Request, Response } from 'express';
 import { LoginService } from './login.service';
 import { Config } from '../../../config/config';
 import { HttpExpress } from '../../../http/http.express';
+import { RequestLoginCodeDto, VerifyLoginRequestDto } from './input.dto';
 
 export class LoginController {
   private controllerPath = '/login';
@@ -16,7 +17,7 @@ export class LoginController {
 
   protected registerRoutes() {
     // FIXME: Add login quota
-    // FIXME: Add class-validator for request body
+    // FIXME: Use the code to get an jwt for further requests
     this.app.post(`${this.controllerPath}/request-login-code`, this.requestLoginCode.bind(this));
     this.app.post(`${this.controllerPath}/verify-login`, this.verifyLogin.bind(this));
   }
@@ -26,6 +27,12 @@ export class LoginController {
   }
 
   async requestLoginCode(req: Request, res: Response) {
+    const input = new RequestLoginCodeDto(req.body);
+    try {
+      await input.validate();
+    } catch (error) {
+      return HttpExpress.badRequest(res, (error as any).toString());
+    }
     const allow = this.allowEmail(req.body.email);
     if (!allow) {
       return HttpExpress.forbidden(res, 'Email not allowed');
@@ -48,14 +55,15 @@ export class LoginController {
   }
 
   async verifyLogin(req: Request, res: Response) {
-    const email = req.body.email;
-    const code = req.body.code;
-    if (!email || !code) {
-      return HttpExpress.badRequest(res, 'Email and code are required');
+    const input = new VerifyLoginRequestDto(req.body);
+    try {
+      await input.validate();
+    } catch (error) {
+      return HttpExpress.badRequest(res, (error as any).toString());
     }
     let success = false;
     try {
-      success = await this.loginService.login(email, code);
+      success = await this.loginService.login(input.email, input.code);
     } catch (error) {
       return HttpExpress.exception(res, error);
     }

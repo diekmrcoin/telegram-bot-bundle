@@ -4,7 +4,7 @@ import { Config } from '../config/config';
 export class DynamoDBWrapper {
   private region = 'eu-west-3';
   readonly client: DynamoDB;
-  tableName = '';
+  tableName = 'synergysys-dev-dynamo-api';
 
   constructor(client?: DynamoDB) {
     this.client = client || new DynamoDB({ region: this.region, credentials: Config.AWS_CREDENTIALS as any });

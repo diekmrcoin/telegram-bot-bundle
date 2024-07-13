@@ -5,13 +5,13 @@ import {
   QueryCommandInput,
   WriteRequest,
 } from '@aws-sdk/client-dynamodb';
-import { DynamoDBWrapper } from './dynamodb';
+import { DynamoDBFactory, DynamoDBWrapper } from './dynamodb';
 
 export class ChatDynamoDBWrapper {
   private wrapper: DynamoDBWrapper;
-  readonly tableName = 'synergysys-dev-dynamo-ai-bot-memory';
+  readonly tableName = 'synergysys-dev-dynamo-api';
   constructor(wrapper?: DynamoDBWrapper, tableName?: string) {
-    this.wrapper = wrapper || new DynamoDBWrapper();
+    this.wrapper = wrapper || DynamoDBFactory.create();
     this.wrapper.tableName = tableName || this.tableName;
   }
 
