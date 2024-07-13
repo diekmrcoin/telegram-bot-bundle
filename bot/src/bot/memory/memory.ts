@@ -1,4 +1,3 @@
-
 import { ChatDynamoDBWrapper } from '../../db/chat.dynamodb';
 import { ChatItem } from './typings/chat-item';
 

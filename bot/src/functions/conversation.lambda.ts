@@ -4,7 +4,7 @@ Config.init();
 
 import { SQSEvent, SQSRecord } from './typings/sqs.event';
 import { ApiDynamoDBWrapper } from '../db/api.dynamodb';
-import { DynamoDBFactory, DynamoDBWrapper } from '../db/dynamodb';
+import { DynamoDBFactory } from '../db/dynamodb';
 import { ChatDynamoDBWrapper } from '../db/chat.dynamodb';
 import { ClaudeWrapping } from '../ai/anthropic/claude-wrapping';
 import { Memory } from '../bot/memory/memory';
