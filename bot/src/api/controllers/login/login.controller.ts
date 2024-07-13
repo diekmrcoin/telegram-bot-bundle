@@ -33,17 +33,14 @@ export class LoginController {
     } catch (error) {
       return HttpExpress.badRequest(res, (error as any).toString());
     }
-    const allow = this.allowEmail(req.body.email);
+    const allow = this.allowEmail(input.email);
     if (!allow) {
+      console.debug(`Email not allowed: ${input.email}`);
       return HttpExpress.forbidden(res, 'Email not allowed');
-    }
-    const email = req.body.email;
-    if (!email) {
-      return HttpExpress.badRequest(res, 'Email is required');
     }
     let success = false;
     try {
-      success = await this.loginService.sendLoginCode(email);
+      success = await this.loginService.sendLoginCode(input.email);
     } catch (error) {
       return HttpExpress.exception(res, error);
     }
