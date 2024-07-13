@@ -1,6 +1,7 @@
 import { Express, Request, Response } from 'express';
 import { LoginService } from './login.service';
 import { Config } from '../../../config/config';
+import { HttpExpress } from '../../../http/http.express';
 
 export class LoginController {
   private controllerPath = '/login';
@@ -14,13 +15,10 @@ export class LoginController {
   }
 
   protected registerRoutes() {
+    // FIXME: Add login quota
+    // FIXME: Add class-validator for request body
     this.app.post(`${this.controllerPath}/request-login-code`, this.requestLoginCode.bind(this));
     this.app.post(`${this.controllerPath}/verify-login`, this.verifyLogin.bind(this));
-  }
-
-  checkAndSetDebug(req: Request) {
-    const debug = req.query.debug === 'true';
-    this.loginService.setDebug(debug);
   }
 
   allowEmail(email: string): boolean {
@@ -28,35 +26,43 @@ export class LoginController {
   }
 
   async requestLoginCode(req: Request, res: Response) {
-    this.checkAndSetDebug(req);
     const allow = this.allowEmail(req.body.email);
     if (!allow) {
-      return res.status(403).send({ message: 'Email not allowed' });
+      return HttpExpress.forbidden(res, 'Email not allowed');
     }
     const email = req.body.email;
     if (!email) {
-      return res.status(400).send({ message: 'Email is required' });
+      return HttpExpress.badRequest(res, 'Email is required');
     }
-    const success = await this.loginService.sendLoginCode(email);
+    let success = false;
+    try {
+      success = await this.loginService.sendLoginCode(email);
+    } catch (error) {
+      return HttpExpress.exception(res, error);
+    }
     if (success) {
-      return res.send({ message: 'Login code sent' });
+      return HttpExpress.created(res, 'Login code sent');
     } else {
-      return res.status(500).send({ message: 'Failed to send login code' });
+      return HttpExpress.fatalError(res, new Error('Failed to send login code'));
     }
   }
 
   async verifyLogin(req: Request, res: Response) {
-    this.checkAndSetDebug(req);
     const email = req.body.email;
     const code = req.body.code;
     if (!email || !code) {
-      return res.status(400).send({ message: 'Email and code are required' });
+      return HttpExpress.badRequest(res, 'Email and code are required');
     }
-    const success = await this.loginService.login(email, code);
+    let success = false;
+    try {
+      success = await this.loginService.login(email, code);
+    } catch (error) {
+      return HttpExpress.exception(res, error);
+    }
     if (success) {
-      return res.send({ message: 'Login successful' });
+      return HttpExpress.ok(res, { message: 'Login successful' });
     } else {
-      return res.status(403).send({ message: 'Login failed' });
+      return HttpExpress.unauthorized(res, 'Login failed');
     }
   }
 }

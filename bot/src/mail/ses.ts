@@ -1,4 +1,4 @@
-import { SendEmailCommand, SendEmailCommandInput, SESClient } from '@aws-sdk/client-ses';
+import { SendEmailCommand, SendEmailCommandInput, SendEmailCommandOutput, SESClient } from '@aws-sdk/client-ses';
 import { Config } from '../config/config';
 
 export class SESWrapper {
@@ -10,7 +10,7 @@ export class SESWrapper {
     this.sesClient = client || new SESClient({ region: this.region, credentials: Config.AWS_CREDENTIALS as any });
   }
 
-  sendEmail(from: string, alias: string, to: string, subject: string, body: string) {
+  sendEmail(from: string, alias: string, to: string, subject: string, body: string): Promise<SendEmailCommandOutput> {
     const params: SendEmailCommandInput = {
       Destination: {
         ToAddresses: [to],

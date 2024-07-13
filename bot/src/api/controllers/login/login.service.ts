@@ -1,23 +1,14 @@
 import { ApiDynamoDBWrapper } from '../../../db/api.dynamodb';
+import { HttpInternalServerErrorException } from '../../../http/http.exception';
 import { SESWrapper } from '../../../mail/ses';
 
 export class LoginService {
-  private client: SESWrapper;
+  private sesClient: SESWrapper;
   private dynamodb: ApiDynamoDBWrapper;
   public _debug = false;
-  constructor(dynamodb?: ApiDynamoDBWrapper, client?: SESWrapper) {
+  constructor(dynamodb?: ApiDynamoDBWrapper, sesClient?: SESWrapper) {
     this.dynamodb = dynamodb || new ApiDynamoDBWrapper();
-    this.client = client || new SESWrapper();
-  }
-
-  setDebug(debug: boolean) {
-    this._debug = debug;
-  }
-
-  private debugLog(message: string) {
-    if (this._debug) {
-      console.debug(message);
-    }
+    this.sesClient = sesClient || new SESWrapper();
   }
 
   public async sendLoginCode(email: string): Promise<boolean> {
@@ -28,30 +19,20 @@ export class LoginService {
     try {
       await this.addLoginRecord(email, code.toString());
     } catch (error) {
-      console.error(error, (error as Error).stack);
-      return false;
+      throw new HttpInternalServerErrorException('Failed to add login record', error as Error);
     }
 
     try {
-      const response = await this.client.sendEmail('login', 'Login', email, subject, body);
-      this.debugLog(`Email sent to ${email} with code ${code}`);
-      this.debugLog('Response:');
-      this.debugLog(JSON.stringify(response, null, 2));
+      await this.sesClient.sendEmail('login', 'Login', email, subject, body);
       return true;
     } catch (error) {
-      console.error(error, (error as Error).stack);
-      return false;
+      throw new HttpInternalServerErrorException('Failed to send email', error as Error);
     }
   }
 
   public async login(email: string, code: string): Promise<boolean> {
-    try {
-      const verified = await this.verifyCode(email, code);
-      return verified;
-    } catch (error) {
-      console.error(error, (error as Error).stack);
-      return false;
-    }
+    const verified = await this.verifyCode(email, code);
+    return verified;
   }
 
   private async addLoginRecord(email: string, code: string): Promise<void> {
@@ -64,7 +45,12 @@ export class LoginService {
   }
 
   private async verifyCode(email: string, code: string): Promise<boolean> {
-    const record = await this.dynamodb.getLoginRecord(email, code);
+    let record;
+    try {
+      record = await this.dynamodb.getLoginRecord(email, code);
+    } catch (error) {
+      throw new HttpInternalServerErrorException('Failed to get login record', error as Error);
+    }
     return !!record;
   }
 }
