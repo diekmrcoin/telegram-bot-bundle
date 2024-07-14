@@ -29,7 +29,7 @@ export class ClaudeWrapping {
       },
     ];
     const answer: Anthropic.Messages.Message = await this.anthropic.messages.create({
-      max_tokens: 1024,
+      max_tokens: 64,
       system: this.systemConfig,
       messages: chain,
       model: model,
