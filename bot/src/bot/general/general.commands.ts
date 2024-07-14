@@ -50,7 +50,7 @@ export class GeneralCommands extends CommandWrapper {
   async quitCommand(ctx: Context): Promise<void> {
     if (this.ignoreMessage(ctx, 'quit')) return;
     console.log(`User ${ctx.chat!.id} quit the chat`);
-    this.memory!.deleteMessages(ctx.chat!.id.toString());
+    this.memory!.deleteMessages(ctx.from!.id.toString(), ctx.chat!.id.toString());
     await ctx.reply('Chat ended. If you need help, just type /start');
   }
   registerCommands(): void {
@@ -71,13 +71,25 @@ export class GeneralCommands extends CommandWrapper {
       const username = ctx.from!.username || 'noname';
       const answer: ModelResponse = await this.aiWrapper!.sendMessage(
         ctx.message.text,
-        (await this.getContext(ctx.chat!.id.toString())) as ChainItem[],
+        (await this.getContext(ctx.from!.id.toString(), ctx.chat!.id.toString())) as ChainItem[],
         this.aiModel,
         this.getClaudeTools(),
       );
       const messages: ChatItem[] = [
-        new ChatItem(ctx.chat!.id.toString(), username, ctx.message.text, ChatRoles.USER),
-        new ChatItem(ctx.chat!.id.toString(), 'Alice', answer.message, ChatRoles.ASSISTANT),
+        ChatItem.fromObject({
+          chatId: ctx.chat!.id.toString(),
+          username: username,
+          user: ctx.from!.id.toString(),
+          message: ctx.message.text,
+          role: ChatRoles.USER,
+        }),
+        ChatItem.fromObject({
+          chatId: ctx.chat!.id.toString(),
+          username: 'Alice',
+          user: ctx.from!.id.toString(),
+          message: answer.message,
+          role: ChatRoles.ASSISTANT,
+        }),
       ];
       await this.memory!.addMessages(messages);
       await ctx.reply(answer.message, { parse_mode: 'MarkdownV2' });
@@ -125,8 +137,8 @@ export class GeneralCommands extends CommandWrapper {
     ];
   }
 
-  async getContext(chatId: string): Promise<(ChainItem | ChainItemTool)[]> {
-    const chain = await this.formatMessages(chatId);
+  async getContext(user: string, chatId: string): Promise<(ChainItem | ChainItemTool)[]> {
+    const chain = await this.formatMessages(user, chatId);
     return chain;
   }
 

@@ -12,10 +12,10 @@ export class ConversationService {
     this.sqsCLient = sqsClient || new SQSWrapper();
     this.memory = memory || new Memory(new ChatDynamoDBWrapper(DynamoDBFactory.create()));
   }
-  async getMessages(chatId: string): Promise<ChatItem[]> {
+  async getMessages(user: string, chatId: string): Promise<ChatItem[]> {
     let messages: ChatItem[];
     try {
-      messages = await this.memory.getMessages(chatId);
+      messages = await this.memory.getMessages(user, chatId);
     } catch (error) {
       throw new HttpInternalServerErrorException('Failed to get messages', error as Error);
     }

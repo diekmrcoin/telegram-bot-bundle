@@ -16,7 +16,7 @@ export abstract class CommandWrapper {
   abstract helpCommand(ctx: any): void;
   abstract quitCommand(ctx: any): void;
   abstract getClaudeTools(): Anthropic.Messages.Tool[];
-  abstract getContext(chatId: string): Promise<(ChainItem | ChainItemTool)[]>;
+  abstract getContext(user:string, chatId: string): Promise<(ChainItem | ChainItemTool)[]>;
 
   getBot(): Telegraf {
     return this.bot;
@@ -37,8 +37,8 @@ export abstract class CommandWrapper {
     return this.memory;
   }
 
-  async formatMessages(chatId: string): Promise<(ChainItem | ChainItemTool)[]> {
-    const messages = await this.memory!.getMessages(chatId);
+  async formatMessages(user: string, chatId: string): Promise<(ChainItem | ChainItemTool)[]> {
+    const messages = await this.memory!.getMessages(user, chatId);
     console.log('Message length:', messages.length);
     const chainMessages = messages.map((message: ChatItem): ChainItem | ChainItemTool => {
       let item: ChainItem | ChainItemTool;

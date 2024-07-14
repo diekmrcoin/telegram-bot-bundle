@@ -30,16 +30,28 @@ export const handler = async (event: SQSEvent, context: any, callback: any): Pro
   try {
     for (record of event.Records) {
       const body = JSON.parse(record.body);
-      console.log(`Processing message: ${body}`);
-      const chat = await memory.getMessages(body.chatId);
+      console.log('Processing message:', body);
+      const chat = await memory.getMessages(body.user, body.chatId);
       const chainChat = chat.map((item) => ({
         role: item.role as ChatRoles,
         content: item.message,
       }));
       const answer: ModelResponse = await claude.sendMessage(body.message, chainChat, ClaudeModels.sonnet_3_5, []);
       const messages: ChatItem[] = [
-        new ChatItem(body.chatId, 'player', body.message, ChatRoles.USER),
-        new ChatItem(body.chatId, 'ai', answer.message, ChatRoles.ASSISTANT),
+        ChatItem.fromObject({
+          chatId: body.chatId,
+          user: body.user,
+          username: 'player',
+          message: body.message,
+          role: ChatRoles.USER,
+        }),
+        ChatItem.fromObject({
+          chatId: body.chatId,
+          user: body.user,
+          username: 'ai',
+          message: answer.message,
+          role: ChatRoles.ASSISTANT,
+        }),
       ];
       await memory.addMessages(messages);
     }

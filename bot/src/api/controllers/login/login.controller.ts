@@ -19,7 +19,6 @@ export class LoginController {
     // FIXME: Add login quota
     // FIXME: Use the code to get an jwt for further requests
     this.app.post(`${this.controllerPath}/request-login-code`, this.requestLoginCode.bind(this));
-    this.app.post(`${this.controllerPath}/verify-login`, this.verifyLogin.bind(this));
   }
 
   allowEmail(email: string): boolean {
@@ -48,26 +47,6 @@ export class LoginController {
       return HttpExpress.created(res, 'Login code sent');
     } else {
       return HttpExpress.fatalError(res, new Error('Failed to send login code'));
-    }
-  }
-
-  async verifyLogin(req: Request, res: Response) {
-    const input = new VerifyLoginRequestDto(req.body);
-    try {
-      await input.validate();
-    } catch (error) {
-      return HttpExpress.badRequest(res, (error as any).toString());
-    }
-    let success = false;
-    try {
-      success = await this.loginService.login(input.email, input.code);
-    } catch (error) {
-      return HttpExpress.exception(res, error);
-    }
-    if (success) {
-      return HttpExpress.ok(res, { message: 'Login successful' });
-    } else {
-      return HttpExpress.unauthorized(res, 'Login failed');
     }
   }
 }

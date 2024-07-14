@@ -62,7 +62,7 @@ export class WordleCommands extends CommandWrapper {
       },
     ];
   }
-  getContext(chatId: string): Promise<ChainItem[]> {
+  getContext(user: string, chatId: string): Promise<ChainItem[]> {
     throw new Error('Method not implemented.');
   }
 }

@@ -29,7 +29,7 @@ export class ChatDynamoDBWrapper {
       TableName: this.wrapper.tableName,
       Item: {
         ...data,
-        partition: { S: `chat_${data.chatId.S}` },
+        partition: { S: `chat_${data.user.S}` },
         id: { S: id },
         dateTime: { S: now.getTime().toString() },
       },
@@ -37,7 +37,7 @@ export class ChatDynamoDBWrapper {
 
     try {
       await this.wrapper.client.putItem(params);
-      console.log(`Registro añadido para el usuario: ${data.username.S}`);
+      console.log(`Registro añadido para el usuario: ${data.user.S}`);
     } catch (error) {
       console.error(`Error al añadir registro: ${error}`);
       console.error((error as Error).stack);
@@ -58,7 +58,7 @@ export class ChatDynamoDBWrapper {
           PutRequest: {
             Item: {
               ...data,
-              partition: { S: `chat_${data.chatId.S}` },
+              partition: { S: `chat_${data.user.S}` },
               id: { S: id },
               dateTime: { S: now.getTime().toString() },
             },
@@ -85,7 +85,7 @@ export class ChatDynamoDBWrapper {
     }
   }
 
-  async getChatRecord(chatId: string, amount?: number): Promise<Record<string, AttributeValue>[]> {
+  async getChatRecord(user: string, chatId: string, amount?: number): Promise<Record<string, AttributeValue>[]> {
     const params: QueryCommandInput = {
       TableName: this.wrapper.tableName,
       KeyConditionExpression: '#partitionKey = :partitionKey',
@@ -93,7 +93,7 @@ export class ChatDynamoDBWrapper {
         '#partitionKey': 'partition',
       },
       ExpressionAttributeValues: {
-        ':partitionKey': { S: `chat_${chatId}` },
+        ':partitionKey': { S: `chat_${user}` },
       },
       Limit: amount || 10,
       ScanIndexForward: false,
@@ -102,8 +102,10 @@ export class ChatDynamoDBWrapper {
       const data = await this.wrapper.client.query(params);
       if (!data || Number(data.Count) < 1) return [];
       if (!data.Items) return [];
+      // filter by chatId
+      const items = data.Items.filter((item) => item.chatId.S === chatId);
       // order asc by .id as string natural comparing
-      return data.Items.sort((a: any, b: any) => a.id.S.localeCompare(b.id.S));
+      return items.sort((a: any, b: any) => a.id.S.localeCompare(b.id.S));
     } catch (error) {
       console.error(`Error al obtener registro: ${error}`);
       console.error((error as Error).stack);
@@ -111,15 +113,17 @@ export class ChatDynamoDBWrapper {
     }
   }
 
-  async deleteChatRecord(chatId: string) {
+  async deleteChatRecord(username: string, chatId: string) {
     const params: QueryCommandInput = {
       TableName: this.wrapper.tableName,
-      KeyConditionExpression: '#partitionKey = :partition',
+      KeyConditionExpression: '#partitionKey = :partition AND #chatId = :chatId',
       ExpressionAttributeNames: {
         '#partitionKey': 'partition',
+        '#chatId': 'chatId',
       },
       ExpressionAttributeValues: {
-        ':partition': { S: `chat_${chatId}` },
+        ':partition': { S: `chat_${username}` },
+        ':chatId': { S: chatId },
       },
     };
     try {
@@ -139,7 +143,7 @@ export class ChatDynamoDBWrapper {
         },
       };
       await this.wrapper.client.batchWriteItem(deleteParams);
-      console.log(`Registros eliminados para el usuario: ${chatId}`);
+      console.log(`Registros eliminados para el usuario: ${username}`);
     } catch (error) {
       console.error(`Error al eliminar registro: ${error}`);
       console.error((error as Error).stack);

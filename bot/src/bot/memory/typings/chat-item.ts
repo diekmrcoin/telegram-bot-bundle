@@ -4,6 +4,7 @@ export class ChatItem {
   constructor(
     public readonly chatId: string,
     public readonly username: string,
+    public readonly user: string,
     public readonly message: string,
     public readonly role: string,
     public readonly TTL?: number,
@@ -12,10 +13,11 @@ export class ChatItem {
     public readonly toolUseId?: string,
   ) {}
 
-  public static fromObject(obj: ChatItem): ChatItem {
+  public static fromObject(obj: any): ChatItem {
     return new ChatItem(
       obj.chatId,
       obj.username,
+      obj.user,
       obj.message,
       obj.role,
       obj.TTL,
@@ -29,6 +31,7 @@ export class ChatItem {
     return new ChatItem(
       item.chatId.S,
       item.username.S,
+      item.user.S,
       item.message.S,
       item.role.S,
       item.TTL ? item.TTL.N : undefined,
@@ -41,12 +44,12 @@ export class ChatItem {
   public toDynamoItem(): Record<string, AttributeValue> {
     const item: Record<string, AttributeValue> = {
       username: { S: this.username },
+      user: { S: this.user },
       chatId: { S: this.chatId },
       message: { S: this.message },
       role: { S: this.role },
-      dateTime: { S: this.dateTime! }, // Assuming dateTime always exists
+      dateTime: { S: this.dateTime! },
     };
-
     if (this.TTL) {
       item.TTL = { N: this.TTL.toString() };
     }
@@ -56,7 +59,6 @@ export class ChatItem {
     if (this.toolUseId) {
       item.toolUseId = { S: this.toolUseId };
     }
-
     return item;
   }
 }

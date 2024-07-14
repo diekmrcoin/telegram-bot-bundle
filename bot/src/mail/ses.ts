@@ -18,6 +18,11 @@ export class SESWrapper {
       Message: {
         Body: {
           Text: {
+            // TODO: Add text version
+            Charset: 'UTF-8',
+            Data: body,
+          },
+          Html: {
             Charset: 'UTF-8',
             Data: body,
           },

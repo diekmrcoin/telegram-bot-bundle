@@ -14,6 +14,7 @@ export class Config {
   protected static _PORT: number = 3000;
   protected static _QUEUE_URL: string = '';
   protected static _LOGIN_ALLOWED_EMAILS: string[] = [];
+  protected static _JWT_SECRET: string = '';
 
   public static init() {
     Config._TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '';
@@ -35,6 +36,7 @@ export class Config {
     Config._PORT = Number(process.env.PORT) || 3000;
     Config._QUEUE_URL = process.env.QUEUE_URL || '';
     Config._LOGIN_ALLOWED_EMAILS = (process.env.LOGIN_ALLOWED_EMAILS || '').split(',').filter((email) => email !== '');
+    Config._JWT_SECRET = process.env.JWT_SECRET || '';
   }
 
   public static get TELEGRAM_BOT_TOKEN(): string {
@@ -75,5 +77,9 @@ export class Config {
 
   public static get QUEUE_URL(): string {
     return Config._QUEUE_URL;
+  }
+
+  public static get JWT_SECRET(): string {
+    return Config._JWT_SECRET;
   }
 }
